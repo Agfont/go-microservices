@@ -98,6 +98,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
+      - mongo-config:/data/configdb
 
   postgres:
     image: "postgres:18"
@@ -123,4 +124,5 @@ volumes:
   caddy_config:
   postgres-data:
   mongo-data:
+  mongo-config:
   rabbitmq-data:

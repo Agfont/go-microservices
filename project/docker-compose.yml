@@ -87,6 +87,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
+      - mongo-config:/data/configdb
   mailhog:
     image: 'mailhog/mailhog:latest'
     ports:
@@ -105,4 +106,5 @@ services:
 volumes:
   postgres-data:
   mongo-data:
+  mongo-config:
   rabbitmq-data:
