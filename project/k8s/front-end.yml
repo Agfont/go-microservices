@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: front-end
-        image: "arthurfont/front-end:1.0.1-prod"
+        image: "arthurfont/front-end:1.0.0"
         resources:
           requests:
             memory: "64Mi"

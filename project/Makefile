@@ -58,7 +58,7 @@ build_auth:
 ## build_mail: builds the mail binary as a linux executable
 build_mail:
 	@echo "Building mail binary..."
-	cd ../mail-service && env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cmd/bin/${MAIL_BINARY} ./cmd/api
+	cd ../mailer-service && env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cmd/bin/${MAIL_BINARY} ./cmd/api
 	@echo "Done!"
 
 ## build_front: builds the front end binary

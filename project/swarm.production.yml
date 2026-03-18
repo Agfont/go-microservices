@@ -15,7 +15,7 @@ services:
       - caddy_config:/config
 
   front-end:
-    image: arthurfont/front-end:1.0.1-prod
+    image: arthurfont/front-end:1.0.0
     deploy:
       mode: replicated
       replicas: 1
@@ -24,7 +24,7 @@ services:
       PORT: "8081"
 
   broker-service:
-    image: arthurfont/broker-service:1.0.1-prod
+    image: arthurfont/broker-service:1.0.0
     deploy:
       mode: replicated
       replicas: 1
@@ -32,7 +32,7 @@ services:
       PORT: "8080"
 
   listener-service:
-    image: arthurfont/listener-service:1.0.0-prod
+    image: arthurfont/listener-service:1.0.0
     deploy:
       mode: replicated
       replicas: 1
@@ -46,13 +46,13 @@ services:
       DSN: "host=postgres port=5432 user=postgres password=password dbname=users sslmode=disable timezone=UTC connect_timeout=5"
 
   logger-service:
-    image: arthurfont/logger-service:1.0.1-prod
+    image: arthurfont/logger-service:1.0.0
     deploy:
       mode: replicated
       replicas: 1
 
   mailer-service:
-    image: arthurfont/mail-service:1.0.0-prod
+    image: arthurfont/mailer-service:1.0.0-prod
     deploy:
       mode: replicated
       replicas: 1

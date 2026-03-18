@@ -1,4 +1,4 @@
-module mail-service
+module mailer-service
 
 go 1.25.7
 

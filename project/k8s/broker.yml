@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: broker-service
-        image: "arthurfont/broker-service:1.0.1-prod"
+        image: "arthurfont/broker-service:1.0.0"
         env:
           - name: PORT
             value: "8080"

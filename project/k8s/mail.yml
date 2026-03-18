@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mailer-service
-        image: "arthurfont/mail-service:1.0.0-prod"
+        image: "arthurfont/mailer-service:1.0.0-prod"
         resources:
           requests:
             memory: "64Mi"
