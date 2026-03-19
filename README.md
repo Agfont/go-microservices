@@ -18,38 +18,38 @@ git clone https://github.com/Agfont/go-microservices.git
 cd go-microservices/project
 ```
 
-3. On a terminal window, run:
+3. Build service binaries, rebuild Docker images, and start all backend services:
 ```bash
 make up_build
 ```
 
-4. On another terminal window, run:
+4. In a second terminal, start the frontend on port 80:
 ```bash
 cd go-microservices/project
 make start
 ```
 
-The frontend will start on `localhost:80` by default.
+The frontend starts on `localhost:80` by default.
 
-5. To stop the services, run:
+5. Stop and remove the Docker Compose services:
 ```bash
 make down
 ```
 
-6. To stop frontend:
+6. Stop only the frontend process:
 ```bash
 make stop
 ```
 
 ## Deploy locally with Docker Swarm and Caddy
 
-1. On a terminal window, run:
+1. From the repository root, initialize Docker Swarm:
 ```bash
 cd ..
 docker swarm init
 ```
 
-2. Build all tag images for our microsservices and push to Docker Hub
+2. Build tagged images for all microservices and push them to Docker Hub:
 ```bash
 docker build -f broker-service/broker-service.dockerfile -t arthurfont/broker-service:1.0.0 ./broker-service
 docker push arthurfont/broker-service:1.0.0
@@ -76,7 +76,7 @@ docker swarm init
 docker stack deploy -c project/swarm.yml --resolve-image=never go-microservices
 ```
 
-4. To stop the services, run:
+4. Remove the stack and leave the swarm:
 ```bash
 docker stack rm go-microservices
 docker swarm leave --force
@@ -91,29 +91,56 @@ The frontend will start on `localhost:80` by default.
 
 ## Deploy locally with Kubernetes (minikube) and Ingress
 
-1. Run:
+1. Start PostgreSQL on the host machine:
+```bash
+docker-compose -f project/postgres.yml up -d
+```
+
+2. Start a local Minikube cluster:
 ```bash
 minikube start
 ```
 
-2. Run:
+3. Enable the Ingress addon in Minikube:
 ```bash
 minikube addons enable ingress
 ```
 
-3. Run:
+4. Apply the ingress resources:
 ```bash
-kubectl apply -f ingress.yml
+kubectl apply -f project/ingress.yml
 ```
 
-4. Set hosts front-end.info and broker-service.info as 127.0.0.1
+5. Set hosts front-end.info and broker-service.info as 127.0.0.1
 ```bash
 sudo vi /etc/hosts
 ```
 
-5. Run:
+6. Apply the Kubernetes deployment manifests:
+
+```bash
+kubectl apply -f project/k8s
+```
+
+7. Start a Minikube tunnel to expose ingress routes:
 ```bash
 minikube tunnel
 ```
 
 Navigate to: http://front-end.info
+
+8. Remove the deployment files:
+```bash
+kubectl delete -f project/k8s
+kubectl delete -f project/ingress.yml
+```
+
+9. Stop the Minikube cluster:
+```bash
+minikube stop
+```
+
+10. Stop PostgreSQL on the host machine:
+```bash
+docker-compose -f project/postgres.yml down
+```
