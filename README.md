@@ -129,18 +129,23 @@ minikube tunnel
 
 Navigate to: http://front-end.info
 
-8. Remove the deployment files:
+8. Open Kubernetes dashboard (optional):
+```bash
+minikube dashboard
+```
+
+9. Remove the deployment files:
 ```bash
 kubectl delete -f project/k8s
 kubectl delete -f project/ingress.yml
 ```
 
-9. Stop the Minikube cluster:
+10. Stop the Minikube cluster:
 ```bash
 minikube stop
 ```
 
-10. Stop PostgreSQL on the host machine:
+11. Stop PostgreSQL on the host machine:
 ```bash
 docker-compose -f project/postgres.yml down
 ```
