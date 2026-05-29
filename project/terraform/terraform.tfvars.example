@@ -1,0 +1,15 @@
+# Copy this file to terraform.tfvars and update values.
+# cp terraform.tfvars.example terraform.tfvars
+
+# HCP org is configured in terraform.tf (cloud.organization).
+# Keep this value here for consistency across local workflows and docs.
+hcp_terraform_org = ""
+
+# Set AWS credentials via environment variables:
+# export AWS_ACCESS_KEY_ID="<your-access-key-id>"
+# export AWS_SECRET_ACCESS_KEY="<your-secret-access-key>"
+# export AWS_SESSION_TOKEN="<your-session-token>" # if temporary credentials are used
+
+aws_region  = "us-east-1"
+environment = "dev"
+name        = "go-microservices"

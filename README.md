@@ -89,9 +89,9 @@ sudo vi /etc/hosts
 
 The frontend will start on `localhost:80` by default.
 
-## Deploy locally with Kubernetes (minikube) and Ingress
+## Deploy locally with Kubernetes (minikube) and Gateway API
 
-1. Start PostgreSQL on the host machine:
+1. Start PostgreSQL on the host machine (image: `postgres:18`):
 ```bash
 docker-compose -f project/postgres.yml up -d
 ```
@@ -101,14 +101,15 @@ docker-compose -f project/postgres.yml up -d
 minikube start
 ```
 
-3. Enable the Ingress addon in Minikube:
+3. Enable the NGINX controller addon in Minikube.
+   The controller provides the `nginx` GatewayClass used by `project/gateway.yml`:
 ```bash
 minikube addons enable ingress
 ```
 
-4. Apply the ingress resources:
+4. Apply the Gateway API resources:
 ```bash
-kubectl apply -f project/ingress.yml
+kubectl apply -f project/gateway.yml
 ```
 
 5. Set hosts front-end.info and broker-service.info as 127.0.0.1
@@ -122,9 +123,15 @@ sudo vi /etc/hosts
 kubectl apply -f project/k8s
 ```
 
-7. Start a Minikube tunnel to expose ingress routes:
+7. Start a Minikube tunnel to expose Gateway routes:
 ```bash
 minikube tunnel
+```
+
+Validate Gateway resources are accepted:
+```bash
+kubectl get gateway
+kubectl get httproute
 ```
 
 Navigate to: http://front-end.info
@@ -137,7 +144,7 @@ minikube dashboard
 9. Remove the deployment files:
 ```bash
 kubectl delete -f project/k8s
-kubectl delete -f project/ingress.yml
+kubectl delete -f project/gateway.yml
 ```
 
 10. Stop the Minikube cluster:
