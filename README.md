@@ -89,9 +89,9 @@ sudo vi /etc/hosts
 
 The frontend will start on `localhost:80` by default.
 
-## Deploy locally with Kubernetes (minikube) and Ingress
+## Deploy locally with Kubernetes (minikube) and Gateway API
 
-1. Start PostgreSQL on the host machine:
+1. Start PostgreSQL on the host machine (image: `postgres:18`):
 ```bash
 docker-compose -f project/postgres.yml up -d
 ```
@@ -101,15 +101,41 @@ docker-compose -f project/postgres.yml up -d
 minikube start
 ```
 
-3. Enable the Ingress addon in Minikube:
+3. Install the Gateway API CRDs and a controller that implements them.
+
+   [Gateway API is an add-on](https://kubernetes.io/docs/concepts/services-networking/gateway/):
+   its kinds are not part of core Kubernetes, and Minikube ships no Gateway
+   controller. This project uses
+   [NGINX Gateway Fabric](https://docs.nginx.com/nginx-gateway-fabric/), which
+   creates the `nginx` GatewayClass referenced by `project/gateway.yml`:
+
 ```bash
-minikube addons enable ingress
+# Gateway API CRDs (v1.5.1, pinned to the NGF release below)
+kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v2.6.7" | kubectl apply --server-side -f -
+
+# NGINX Gateway Fabric CRDs, then the controller itself
+kubectl apply --server-side -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v2.6.7/deploy/crds.yaml
+kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v2.6.7/deploy/default/deploy.yaml
 ```
 
-4. Apply the ingress resources:
+The CRDs are applied with `--server-side` because some of their schemas exceed
+the 256KB limit of the `last-applied-configuration` annotation that client-side
+apply writes. If a previous client-side apply already created them, add
+`--force-conflicts` to take over field ownership.
+
+Wait for the controller and confirm the GatewayClass is accepted:
 ```bash
-kubectl apply -f project/ingress.yml
+kubectl -n nginx-gateway wait --for=condition=Available deploy/nginx-gateway --timeout=120s
+kubectl get gatewayclass
 ```
+
+4. Apply the Gateway API resources:
+```bash
+kubectl apply -f project/gateway.yml
+```
+
+NGINX Gateway Fabric provisions an NGINX data plane and a `LoadBalancer`
+Service for the Gateway, which is why `minikube tunnel` is needed in step 7.
 
 5. Set hosts front-end.info and broker-service.info as 127.0.0.1
 ```bash
@@ -122,9 +148,15 @@ sudo vi /etc/hosts
 kubectl apply -f project/k8s
 ```
 
-7. Start a Minikube tunnel to expose ingress routes:
+7. Start a Minikube tunnel to expose Gateway routes:
 ```bash
 minikube tunnel
+```
+
+Validate Gateway resources are accepted:
+```bash
+kubectl get gateway
+kubectl get httproute
 ```
 
 Navigate to: http://front-end.info
@@ -137,7 +169,7 @@ minikube dashboard
 9. Remove the deployment files:
 ```bash
 kubectl delete -f project/k8s
-kubectl delete -f project/ingress.yml
+kubectl delete -f project/gateway.yml
 ```
 
 10. Stop the Minikube cluster:
