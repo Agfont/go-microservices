@@ -3,7 +3,7 @@ module log-service
 go 1.25.7
 
 require (
-	github.com/go-chi/chi/v5 v5.2.5
+	github.com/go-chi/chi/v5 v5.3.1
 	github.com/go-chi/cors v1.2.2
 	go.mongodb.org/mongo-driver v1.17.9
 	google.golang.org/grpc v1.80.0
